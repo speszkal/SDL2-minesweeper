@@ -1,0 +1,14 @@
+#VS Code files
+.vscode/
+
+#Gimp files
+graphics/*.xcf
+
+#libraries
+libs/
+SDL2_image-x86.dll
+SDL2_image.dll
+SDL2.dll
+
+#personal files
+TODO
