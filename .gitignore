@@ -6,7 +6,9 @@ graphics/*.xcf
 
 #libraries
 libs/
-*.dll
+SDL2_image-x86.dll
+SDL2_image.dll
+SDL2.dll
 
 #personal files
 TODO
