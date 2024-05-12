@@ -5,6 +5,9 @@ extern StateMachine gStateMachine;
 
 extern std::map<std::string, Texture*> gTextures;
 
+extern std::map<std::string, TTF_Font*> gFonts;
+extern std::map<std::string, Texture*> gTextTextures;
+
 extern std::map<SDL_Keycode, bool> gKeyPressed;
 
 extern int random(int a, int b);

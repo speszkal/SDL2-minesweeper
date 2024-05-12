@@ -2,27 +2,29 @@
 
 bool Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
+    bool success = true;
+    
     int flags = 0;
     if(fullscreen) flags = SDL_WINDOW_FULLSCREEN;
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         std::cout<<"SDL could not initialize! SDL_Error: " << SDL_GetError() <<std::endl;
-        return false;
+        success = false;
     }
 
     window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
     if(window == NULL)
     {
         std::cout<<"Window could not be created! SDL_Error: " << SDL_GetError() <<std::endl;
-        return false;
+        success = false;
     }
 
     renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
     if(renderer == NULL)
     {
         std::cout<< "Renderer could not be created! SDL Error: " << SDL_GetError() <<std::endl;
-        return false;
+        success = false;
     }
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
@@ -30,17 +32,52 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     if( !(IMG_Init(imgFlags) & imgFlags) )
     {
         std::cout<< "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() <<std::endl;
-        return false;
+        success = false;
+    }
+
+    //Initialize SDL_ttf
+    if( TTF_Init() == -1 )
+    {
+        std::cout<< "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() <<std::endl;
+        success = false;
     }
     
     //gStateMachine.change(PlayState::getInstance());
     gRunning = true;
     
-    return true;
+    return success;
 }
 
 bool Game::loadMedia()
 {
+    bool success = true;
+    
+    //Fonts
+    gFonts["big"] = TTF_OpenFont( ".\\fonts\\font.ttf", 50 );
+    
+    for(auto font : gFonts)
+    {
+        if(font.s == NULL)
+        {
+            std::cout<< "Failed to load lazy font! SDL_ttf Error: " << TTF_GetError() <<std::endl;
+            success = false;
+        }
+    }
+
+    //Textures made from fonts
+    gTextTextures["game-over"] = new Texture(renderer);    gTextTextures["game-over"]->loadFromRenderedText("big", "Game Over!", {0, 0, 0});
+
+    for(auto tt : gTextTextures)
+    {
+        if(tt.s == NULL)
+        {
+            std::cout<< "Failed to render text texture!" <<std::endl;
+            success = false;
+        }
+    }
+
+    //Textures
+    gTextures["background"] = new Texture(renderer);    gTextures["background"]->loadFromFile(".\\graphics\\background.png");
     gTextures["tile-basic"] = new Texture(renderer);    gTextures["tile-basic"]->loadFromFile(".\\graphics\\tile.png");
     gTextures["tile-flagged"] = new Texture(renderer);    gTextures["tile-flagged"]->loadFromFile(".\\graphics\\flagged.png");
     gTextures["tile-incorrectly-flagged"] = new Texture(renderer);    gTextures["tile-incorrectly-flagged"]->loadFromFile(".\\graphics\\flagged-x.png");
@@ -58,12 +95,11 @@ bool Game::loadMedia()
         if(t.s == NULL)
         {
             std::cout<< "Failed to load \'" << t.f << "\' texture image! SDL_image Error: " << IMG_GetError() <<std::endl;
-            return false;
+            success = false;
         }
     }
-    
 
-    return true;
+    return success;
 }
 
 void Game::handleEvents()
@@ -113,12 +149,19 @@ void Game::render()
 void Game::close()
 {   
     for(auto t : gTextures) { t.s->free(); }
+    for(auto tt : gTextTextures) { tt.s->free(); }
+    for(auto& font : gFonts)
+    {
+        TTF_CloseFont( font.s );
+        font.s = NULL;
+    }
     
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     renderer = NULL;
     window = NULL;
     
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }

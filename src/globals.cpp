@@ -4,6 +4,9 @@ StateMachine gStateMachine = StateMachine();
 
 std::map<std::string, Texture*> gTextures;
 
+std::map<std::string, TTF_Font*> gFonts;
+std::map<std::string, Texture*> gTextTextures;
+
 std::map<SDL_Keycode, bool> gKeyPressed;
 
 int random(int a, int b)

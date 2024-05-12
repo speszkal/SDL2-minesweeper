@@ -1,7 +1,7 @@
 #include "../dependencies.h"
 
 void GameOverState::enter()
-{
+{   
     std::cout<<"GAME OVER"<<std::endl;
 }
 
@@ -19,6 +19,7 @@ void GameOverState::render(SDL_Renderer* renderer)
     SDL_RenderClear(renderer);
     
     PlayState::getInstance().render(renderer);
+    gTextTextures["game-over"]->render(LEFT_MARGIN+(INSIDE_WINDOW_WIDTH-gTextTextures["game-over"]->getWidth())/2, TOP_MARGIN+(INSIDE_WINDOW_HEIGHT-gTextTextures["game-over"]->getHeight())/2);
     
     SDL_RenderPresent(renderer);
 }

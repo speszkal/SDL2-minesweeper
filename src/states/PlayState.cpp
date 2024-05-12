@@ -7,9 +7,9 @@ void PlayState::enter()
 
     int idx=0;
 
-    for(int y=90; y<INSIDE_WINDOW_HEIGHT+90; y=y+TILE_SIZE)
+    for(int y=TOP_MARGIN; y<WINDOW_HEIGHT-BOTTOM_MARGIN; y=y+TILE_SIZE)
     {
-        for(int x=90; x<INSIDE_WINDOW_WIDTH+90; x=x+TILE_SIZE)
+        for(int x=LEFT_MARGIN; x<WINDOW_WIDTH-RIGHT_MARGIN; x=x+TILE_SIZE)
         {
             tileMap[idx] = new Tile(x, y, TILE_SIZE, TILE_SIZE, random(1, 100)<10);
             if(tileMap[idx]->bomb) tilesLeft--;
@@ -96,6 +96,8 @@ void PlayState::render(SDL_Renderer* renderer)
 {   
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
+    
+    gTextures["background"]->render(0, 0);
     
     for(int i=0; i<MAX_TILES; i++)
         tileMap[i]->render(renderer);
