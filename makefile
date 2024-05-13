@@ -1,4 +1,4 @@
-OBJS = main.cpp src/StateMachine.cpp src/states/BaseState.cpp src/states/PlayState.cpp src/states/GameOverState.cpp src/Game.cpp src/Texture.cpp src/Tile.cpp src/globals.cpp
+OBJS = main.cpp src/util/Timer.cpp src/StateMachine.cpp src/states/BaseState.cpp src/states/PlayState.cpp src/states/GameOverState.cpp src/states/VictoryState.cpp src/Game.cpp src/Texture.cpp src/Tile.cpp src/globals.cpp
 
 OBJS_NAME = main.exe
 

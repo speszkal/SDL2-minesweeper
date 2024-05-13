@@ -63,14 +63,14 @@ void Texture::free()
     }
 }
 
-void Texture::render(int x, int y, SDL_Rect* srcrect, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void Texture::render(int x, int y, SDL_Rect* srcrect, int Xscale, int Yscale, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
     SDL_Rect dstrect = {x, y, width, height};
 
     if(srcrect != NULL)
     {
-        dstrect.w = srcrect->w;
-        dstrect.h = srcrect->h;
+        dstrect.w = Xscale*srcrect->w;
+        dstrect.h = Yscale*srcrect->h;
     }
 
     SDL_RenderCopyEx(renderer, texture, srcrect, &dstrect, angle, center, flip);

@@ -1,5 +1,7 @@
 #include "dependencies.h"
 
+bool capFPS = false;
+
 StateMachine gStateMachine = StateMachine();
 
 std::map<std::string, Texture*> gTextures;

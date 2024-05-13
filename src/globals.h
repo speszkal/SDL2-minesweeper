@@ -1,6 +1,8 @@
 #ifndef globals_h
 #define globals_h
 
+extern bool capFPS;
+
 extern StateMachine gStateMachine;
 
 extern std::map<std::string, Texture*> gTextures;

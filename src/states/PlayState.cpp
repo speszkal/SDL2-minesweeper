@@ -33,6 +33,8 @@ void PlayState::enter()
             idx++;
         }
     }
+
+    gameTimer.start();
 }
 
 void PlayState::tileDiscovery(int start)
@@ -76,7 +78,13 @@ void PlayState::tileDiscovery(int start)
 
 void PlayState::update()
 {   
-    if(tilesLeft == 0) std::cout<<"YOU'VE WON!"<<std::endl;
+    gTextTextures["timer"]->loadFromRenderedText("font-l", std::to_string(gameTimer.getTicks()/1000), {200, 0, 35});
+    
+    if(tilesLeft < 0)
+    {
+        std::cout<<"YOU'VE WON!"<<std::endl;
+        gStateMachine.change(VictoryState::getInstance());
+    }
     
     for(int i=0; i<MAX_TILES; i++)
     {   
@@ -94,15 +102,12 @@ void PlayState::update()
 
 void PlayState::render(SDL_Renderer* renderer)
 {   
-    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-    SDL_RenderClear(renderer);
-    
     gTextures["background"]->render(0, 0);
     
     for(int i=0; i<MAX_TILES; i++)
         tileMap[i]->render(renderer);
-    
-    SDL_RenderPresent(renderer);
+
+    gTextTextures["timer"]->render(WINDOW_WIDTH/4, 50-gTextTextures["timer"]->getHeight()/2);
 }
 
 void PlayState::exit()
@@ -113,9 +118,9 @@ void PlayState::exit()
         
         if(tileMap[i]->flagged) tileMap[i]->value=-1;
         if(tileMap[i]->bomb) tileMap[i]->hidden = false;
-
-        std::cout<<"YOU'VE WON!"<<std::endl;
     }
+
+    
 }
 
 PlayState::~PlayState()

@@ -5,6 +5,8 @@
 #include "SDL_ttf.h"
 //#include "SDL_mixer.h"
 
+#include "util/Timer.h"
+
 #include "Texture.h"
 
 #include "StateMachine.h"
@@ -17,6 +19,7 @@
 #include "states/BaseState.h"
 #include "states/PlayState.h"
 #include "states/GameOverState.h"
+#include "states/VictoryState.h"
 
 #include "Game.h"
 

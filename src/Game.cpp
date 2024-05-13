@@ -44,6 +44,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     
     //gStateMachine.change(PlayState::getInstance());
     gRunning = true;
+    fpsTimer.start();
     
     return success;
 }
@@ -53,7 +54,8 @@ bool Game::loadMedia()
     bool success = true;
     
     //Fonts
-    gFonts["big"] = TTF_OpenFont( ".\\fonts\\font.ttf", 50 );
+    gFonts["font-s"] = TTF_OpenFont( ".\\fonts\\font.ttf", 25);
+    gFonts["font-l"] = TTF_OpenFont( ".\\fonts\\font.ttf", 50 );
     
     for(auto font : gFonts)
     {
@@ -65,7 +67,10 @@ bool Game::loadMedia()
     }
 
     //Textures made from fonts
-    gTextTextures["game-over"] = new Texture(renderer);    gTextTextures["game-over"]->loadFromRenderedText("big", "Game Over!", {0, 0, 0});
+    gTextTextures["fps"] = new Texture(renderer);    gTextTextures["fps"]->loadFromRenderedText("font-s", "0", {0, 0, 200});
+    gTextTextures["game-over"] = new Texture(renderer);    gTextTextures["game-over"]->loadFromRenderedText("font-l", "Game Over!", {0, 0, 0});
+    gTextTextures["victory"] = new Texture(renderer);    gTextTextures["victory"]->loadFromRenderedText("font-l", "You've won!", {0, 0, 0});
+    gTextTextures["timer"] = new Texture(renderer);    gTextTextures["timer"]->loadFromRenderedText("font-l", "0", {200, 0, 35});
 
     for(auto tt : gTextTextures)
     {
@@ -77,18 +82,8 @@ bool Game::loadMedia()
     }
 
     //Textures
+    gTextures["tiles-spritesheet"] = new Texture(renderer);    gTextures["tiles-spritesheet"]->loadFromFile(".\\graphics\\tiles.png");
     gTextures["background"] = new Texture(renderer);    gTextures["background"]->loadFromFile(".\\graphics\\background.png");
-    gTextures["tile-basic"] = new Texture(renderer);    gTextures["tile-basic"]->loadFromFile(".\\graphics\\tile.png");
-    gTextures["tile-flagged"] = new Texture(renderer);    gTextures["tile-flagged"]->loadFromFile(".\\graphics\\flagged.png");
-    gTextures["tile-incorrectly-flagged"] = new Texture(renderer);    gTextures["tile-incorrectly-flagged"]->loadFromFile(".\\graphics\\flagged-x.png");
-    gTextures["bomb"] = new Texture(renderer);    gTextures["bomb"]->loadFromFile(".\\graphics\\bomb.png");
-    gTextures["bomb-clicked"] = new Texture(renderer);    gTextures["bomb-clicked"]->loadFromFile(".\\graphics\\bomb-red.png");
-    for(int i=0; i<=8; i++)
-    {
-        std::string filename = ".\\graphics\\" + std::to_string(i) + ".png";
-        std::string txtName = "tile" + std::to_string(i);
-        gTextures[txtName] = new Texture(renderer);    gTextures[txtName]->loadFromFile(filename);
-    }
     
     for(auto t : gTextures)
     {
@@ -116,6 +111,20 @@ void Game::handleEvents()
         if(e.type == SDL_KEYDOWN)
         {
             if(e.key.keysym.sym == SDLK_ESCAPE) gRunning = false;
+            if(e.key.keysym.sym == SDLK_F3) showFPS ? showFPS = false : showFPS = true;
+            if(e.key.keysym.sym == SDLK_F4)
+            {
+                if(capFPS)
+                {
+                    capFPS = false;
+                    std::cout<<"FPS cap off."<<std::endl;
+                }
+                else
+                {
+                    capFPS = true;
+                    std::cout<<"FPS cap on."<<std::endl;
+                }
+            }
             gKeyPressed[e.key.keysym.sym] = true;
         }
 
@@ -136,14 +145,33 @@ void Game::handleEvents()
 }
 
 void Game::update()
-{ 
+{   
     gStateMachine.update();
     for(auto key : gKeyPressed) key.s = false;
+    
+    float fps;
+    if(fpsTimer.getTicks()>75)
+    {
+        fps = frameCounter / (fpsTimer.getTicks() / 1000.f);
+        frameCounter = 0;
+        fpsTimer.start();
+
+        gTextTextures["fps"]->loadFromRenderedText("font-s", std::to_string(fps), {0, 0, 200});
+    }
 }
 
 void Game::render()
-{
+{   
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_RenderClear(renderer);
+
     gStateMachine.render(renderer);
+
+    if(showFPS) gTextTextures["fps"]->render(0, 0);
+
+    SDL_RenderPresent(renderer);
+    
+    frameCounter++;
 }
 
 void Game::close()

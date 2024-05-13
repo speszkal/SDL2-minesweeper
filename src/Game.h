@@ -17,6 +17,10 @@ class Game
         void close();
 
     private:
+        Timer fpsTimer;
+        int frameCounter=0;
+        bool showFPS = false;
+        
         SDL_Window *window = NULL;
         SDL_Renderer *renderer = NULL;
 
