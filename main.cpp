@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
     
     std::cout<<"--- Keystrokes guide ---"<<std::endl;
     std::cout<<"F3 - toggle FPS display"<<std::endl;
-    std::cout<<"F4 - toggle FPS cap (30 fps, disabled by default)"<<std::endl;
+    std::cout<<"F4 - toggle FPS cap (30 fps, enabled by default)"<<std::endl;
     
     Game game;
     

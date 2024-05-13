@@ -34,6 +34,8 @@ void PlayState::enter()
         }
     }
 
+    menuButton = new Button(240, 24, 52, 52, "menuButton");
+    
     gameTimer.start();
 }
 
@@ -78,6 +80,9 @@ void PlayState::tileDiscovery(int start)
 
 void PlayState::update()
 {   
+    menuButton->update();
+    //if(menuButton->ifPressed()) pause ? pause = false : pause = true;
+
     gTextTextures["timer"]->loadFromRenderedText("font-l", std::to_string(gameTimer.getTicks()/1000), {200, 0, 35});
     
     if(tilesLeft < 0)
@@ -88,26 +93,27 @@ void PlayState::update()
     
     for(int i=0; i<MAX_TILES; i++)
     {   
-        if(!mousePressed || !mouseCollision(tileMap[i]->x, tileMap[i]->y, tileMap[i]->width, tileMap[i]->height)) continue;
+        if(!mouseButtonDown || !mouseCollision(tileMap[i]->x, tileMap[i]->y, tileMap[i]->width, tileMap[i]->height)) continue;
             
         if(mouseButton == "left" && !tileMap[i]->flagged) tileDiscovery(i);
         else if(mouseButton == "right" && tileMap[i]->hidden) (tileMap[i]->flagged) ? tileMap[i]->flagged=false : tileMap[i]->flagged=true;
 
         tileMap[i]->update();
     }
-
-    mouseButton = "none";
-    mousePressed = false;
 }
 
 void PlayState::render(SDL_Renderer* renderer)
 {   
     gTextures["background"]->render(0, 0);
+
+    menuButton->render(renderer);
     
     for(int i=0; i<MAX_TILES; i++)
         tileMap[i]->render(renderer);
 
     gTextTextures["timer"]->render(WINDOW_WIDTH/4, 50-gTextTextures["timer"]->getHeight()/2);
+
+    if(menuButton->ifDown()) gTextures["popup"]->render(LEFT_MARGIN+100, TOP_MARGIN+20, NULL, 2, 2);
 }
 
 void PlayState::exit()
@@ -119,8 +125,6 @@ void PlayState::exit()
         if(tileMap[i]->flagged) tileMap[i]->value=-1;
         if(tileMap[i]->bomb) tileMap[i]->hidden = false;
     }
-
-    
 }
 
 PlayState::~PlayState()

@@ -7,10 +7,7 @@ void GameOverState::enter()
 
 void GameOverState::update()
 {   
-    if(mousePressed) gStateMachine.change(PlayState::getInstance());
-    
-    mouseButton = "none";
-    mousePressed = false;
+    if(mouseButtonDown) gStateMachine.change(PlayState::getInstance());
 }
 
 void GameOverState::render(SDL_Renderer* renderer)

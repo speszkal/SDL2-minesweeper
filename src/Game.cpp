@@ -42,7 +42,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         success = false;
     }
     
-    //gStateMachine.change(PlayState::getInstance());
+    gStateMachine.change(PlayState::getInstance());
     gRunning = true;
     fpsTimer.start();
     
@@ -84,6 +84,8 @@ bool Game::loadMedia()
     //Textures
     gTextures["tiles-spritesheet"] = new Texture(renderer);    gTextures["tiles-spritesheet"]->loadFromFile(".\\graphics\\tiles.png");
     gTextures["background"] = new Texture(renderer);    gTextures["background"]->loadFromFile(".\\graphics\\background.png");
+    gTextures["menuButton"] = new Texture(renderer);    gTextures["menuButton"]->loadFromFile(".\\graphics\\menuButton.png");
+    gTextures["popup"] = new Texture(renderer);    gTextures["popup"]->loadFromFile(".\\graphics\\popup.png");
     
     for(auto t : gTextures)
     {
@@ -134,7 +136,16 @@ void Game::handleEvents()
 
         if(e.type == SDL_MOUSEBUTTONDOWN)
         {
-            mousePressed = true;
+            mouseButtonDown = true;
+            
+            if(e.button.button == SDL_BUTTON_LEFT)
+                mouseButton = "left";
+            else if (e.button.button == SDL_BUTTON_RIGHT)
+                mouseButton = "right";
+        }
+        if(e.type == SDL_MOUSEBUTTONUP)
+        {
+            mouseButtonUp = true;
             
             if(e.button.button == SDL_BUTTON_LEFT)
                 mouseButton = "left";
@@ -145,7 +156,7 @@ void Game::handleEvents()
 }
 
 void Game::update()
-{   
+{
     gStateMachine.update();
     for(auto key : gKeyPressed) key.s = false;
     
@@ -158,6 +169,10 @@ void Game::update()
 
         gTextTextures["fps"]->loadFromRenderedText("font-s", std::to_string(fps), {0, 0, 200});
     }
+
+    mouseButton = "none";
+    mouseButtonDown = false;
+    mouseButtonUp = false;
 }
 
 void Game::render()

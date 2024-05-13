@@ -19,7 +19,8 @@ extern bool gRunning;
 
 extern int xMouse;
 extern int yMouse;
-extern bool mousePressed;
+extern bool mouseButtonDown;
+extern bool mouseButtonUp;
 extern std::string mouseButton;
 
 #endif // globals_h

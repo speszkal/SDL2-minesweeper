@@ -16,6 +16,8 @@ public:
 	std::vector<int> graf[MAX_TILES];
 	int tilesLeft;
 	Timer gameTimer;
+	Button* menuButton;
+	bool pause=false;
 
 private:
 	PlayState() {}

@@ -1,6 +1,6 @@
 #include "dependencies.h"
 
-bool capFPS = false;
+bool capFPS = true;
 
 StateMachine gStateMachine = StateMachine();
 
@@ -26,5 +26,6 @@ bool mouseCollision(int x, int y, int width, int height)
 bool gRunning = false;
 
 int xMouse = 0, yMouse = 0;
-bool mousePressed = false;
+bool mouseButtonDown = false;
+bool mouseButtonUp = false;
 std::string mouseButton = "none";

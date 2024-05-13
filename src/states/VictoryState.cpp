@@ -7,10 +7,7 @@ void VictoryState::enter()
 
 void VictoryState::update()
 {   
-    if(mousePressed) gStateMachine.change(PlayState::getInstance());
-    
-    mouseButton = "none";
-    mousePressed = false;
+    if(mouseButtonDown) gStateMachine.change(PlayState::getInstance());
 }
 
 void VictoryState::render(SDL_Renderer* renderer)
