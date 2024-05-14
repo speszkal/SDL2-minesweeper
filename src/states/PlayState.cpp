@@ -4,6 +4,7 @@ void PlayState::enter()
 {
     gRunning = true;
     tilesLeft = MAX_TILES;
+    bombsToFlags = 0;
 
     int idx=0;
 
@@ -12,7 +13,7 @@ void PlayState::enter()
         for(int x=LEFT_MARGIN; x<WINDOW_WIDTH-RIGHT_MARGIN; x=x+TILE_SIZE)
         {
             tileMap[idx] = new Tile(x, y, TILE_SIZE, TILE_SIZE, random(1, 100)<10);
-            if(tileMap[idx]->bomb) tilesLeft--;
+            if(tileMap[idx]->bomb) bombsToFlags++;
 
             int tabLenght = INSIDE_WINDOW_WIDTH/TILE_SIZE;
             int tabHeight = INSIDE_WINDOW_HEIGHT/TILE_SIZE;
@@ -34,6 +35,8 @@ void PlayState::enter()
         }
     }
 
+    tilesLeft -= bombsToFlags;
+    
     menuButton = new Button(240, 24, 52, 52, "menuButton");
     
     gameTimer.start();
@@ -52,11 +55,11 @@ void PlayState::tileDiscovery(int start)
     std::queue<int> Q;
     Q.push(start);
     tileMap[start]->hidden = false;
+    tilesLeft--;
     while(Q.size())
     {
         int v = Q.front();
         Q.pop();
-        tilesLeft--;
 
         int bombCount = 0;
         for(auto offset : graf[v])
@@ -73,6 +76,7 @@ void PlayState::tileDiscovery(int start)
             int u = v + offset;
             if(!tileMap[u]->hidden) continue;
             tileMap[u]->hidden = false;
+            tilesLeft--;
             Q.push(u);
         }
     }
@@ -84,8 +88,9 @@ void PlayState::update()
     //if(menuButton->ifPressed()) pause ? pause = false : pause = true;
 
     gTextTextures["timer"]->loadFromRenderedText("font-l", std::to_string(gameTimer.getTicks()/1000), {200, 0, 35});
+    gTextTextures["bombs-to-flag-left-counter"]->loadFromRenderedText("font-l", std::to_string(bombsToFlags), {200, 0, 35});
     
-    if(tilesLeft < 0)
+    if(tilesLeft <= 0)
     {
         std::cout<<"YOU'VE WON!"<<std::endl;
         gStateMachine.change(VictoryState::getInstance());
@@ -95,8 +100,20 @@ void PlayState::update()
     {   
         if(!mouseButtonDown || !mouseCollision(tileMap[i]->x, tileMap[i]->y, tileMap[i]->width, tileMap[i]->height)) continue;
             
-        if(mouseButton == "left" && !tileMap[i]->flagged) tileDiscovery(i);
-        else if(mouseButton == "right" && tileMap[i]->hidden) (tileMap[i]->flagged) ? tileMap[i]->flagged=false : tileMap[i]->flagged=true;
+        if(mouseButton == "left" && !tileMap[i]->flagged && tileMap[i]->hidden) tileDiscovery(i);
+        else if(mouseButton == "right" && tileMap[i]->hidden)
+        {
+            if(tileMap[i]->flagged)
+            {
+                tileMap[i]->flagged=false;
+                bombsToFlags++;
+            }
+            else
+            {
+                tileMap[i]->flagged=true;
+                bombsToFlags--;
+            }
+        }
 
         tileMap[i]->update();
     }
@@ -112,6 +129,7 @@ void PlayState::render(SDL_Renderer* renderer)
         tileMap[i]->render(renderer);
 
     gTextTextures["timer"]->render(WINDOW_WIDTH/4, 50-gTextTextures["timer"]->getHeight()/2);
+    gTextTextures["bombs-to-flag-left-counter"]->render(WINDOW_WIDTH*3/4, 50-gTextTextures["bombs-to-flag-left-counter"]->getHeight()/2);
 
     if(menuButton->ifDown()) gTextures["popup"]->render(LEFT_MARGIN+100, TOP_MARGIN+20, NULL, 2, 2);
 }

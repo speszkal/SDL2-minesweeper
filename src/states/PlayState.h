@@ -15,6 +15,7 @@ public:
 	Tile* tileMap[MAX_TILES+2*INSIDE_WINDOW_WIDTH/TILE_SIZE+2*INSIDE_WINDOW_HEIGHT/TILE_SIZE+4];
 	std::vector<int> graf[MAX_TILES];
 	int tilesLeft;
+	int bombsToFlags=0;
 	Timer gameTimer;
 	Button* menuButton;
 	bool pause=false;

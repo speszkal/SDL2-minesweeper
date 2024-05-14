@@ -70,7 +70,8 @@ bool Game::loadMedia()
     gTextTextures["fps"] = new Texture(renderer);    gTextTextures["fps"]->loadFromRenderedText("font-s", "0", {0, 0, 200});
     gTextTextures["game-over"] = new Texture(renderer);    gTextTextures["game-over"]->loadFromRenderedText("font-l", "Game Over!", {0, 0, 0});
     gTextTextures["victory"] = new Texture(renderer);    gTextTextures["victory"]->loadFromRenderedText("font-l", "You've won!", {0, 0, 0});
-    gTextTextures["timer"] = new Texture(renderer);    gTextTextures["timer"]->loadFromRenderedText("font-l", "0", {200, 0, 35});
+    gTextTextures["timer"] = new Texture(renderer);    gTextTextures["timer"]->loadFromRenderedText("font-l", "000", {200, 0, 35});
+    gTextTextures["bombs-to-flag-left-counter"] = new Texture(renderer);    gTextTextures["bombs-to-flag-left-counter"]->loadFromRenderedText("font-l", "000", {200, 0, 35});
 
     for(auto tt : gTextTextures)
     {
